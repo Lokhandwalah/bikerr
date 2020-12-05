@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "575309312058",
+    "firebase_url": "https://bikerr-b0853.firebaseio.com",
+    "project_id": "bikerr-b0853",
+    "storage_bucket": "bikerr-b0853.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:575309312058:android:8dacb6ad574a9ee6960503",
+        "android_client_info": {
+          "package_name": "com.yakshap.bikerr"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "575309312058-pbe5n02sqcso74hc9o02c8jrqn2m530g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.yakshap.bikerr",
+            "certificate_hash": "fb06a08b63812029fbb702dbbcafc73433a6d03f"
+          }
+        },
+        {
+          "client_id": "575309312058-v2547qar1a7nrekk3skcde643jk2jl91.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAr5UXuajc7pnn1cUj9fXcFVjVKBOIxYsU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "575309312058-v2547qar1a7nrekk3skcde643jk2jl91.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

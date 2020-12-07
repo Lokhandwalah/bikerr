@@ -46,4 +46,21 @@ class DatabaseService {
       transaction.update(user.userDoc.reference, {'documents': documents});
     });
   }
+
+  Future<void> deleteDoc(CurrentUser user, String docName) async {
+    await db.runTransaction((transaction) async {
+      final Map<String, dynamic> documents = user.documents;
+      documents.remove(docName);
+      transaction.update(user.userDoc.reference, {'documents': documents});
+      await StorageService().deleteDoc(user.email, docName).catchError((e) {
+        print(e.toString());
+        throw Exception('Error deleting image. Try again after sometime');
+      });
+    });
+  }
+
+  Future<void> updateKM(CurrentUser user, int kms, {bool reset = false}) async {
+    await db.runTransaction((transaction) async => transaction
+        .update(user.userDoc.reference, {'kms': reset ? 0 : user.kms + kms}));
+  }
 }

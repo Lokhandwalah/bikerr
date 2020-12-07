@@ -2,8 +2,11 @@ import 'dart:io';
 
 import 'package:bikerr/models/document.dart';
 import 'package:bikerr/models/user.dart';
+import 'package:bikerr/screens/documentation/image_viewer.dart';
 import 'package:bikerr/services/database.dart';
 import 'package:bikerr/utilities/constants.dart';
+import 'package:bikerr/widgets/dialog_box.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -31,7 +34,7 @@ class _DocumentationState extends State<Documentation> {
                 margin: const EdgeInsets.only(top: 10),
                 padding: const EdgeInsets.all(8),
                 child: Text(
-                  'Documentaion',
+                  'Documentation',
                   style: Theme.of(context).textTheme.headline3.copyWith(
                       color: primary, letterSpacing: 2, fontFamily: 'Raleway'),
                 ),
@@ -52,6 +55,7 @@ class _DocumentationState extends State<Documentation> {
       floatingActionButton: FloatingActionButton(
         onPressed: _handleDocUpload,
         tooltip: 'Add Document',
+        heroTag: 'Add Document',
         child: Icon(Icons.add),
       ),
     );
@@ -80,6 +84,15 @@ class _DocumentationState extends State<Documentation> {
     );
   }
 
+  void _openImage(Document doc) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => ImageViewer(doc),
+        fullscreenDialog: true,
+      ),
+    );
+  }
+
   void _handleDocUpload() async {
     final docType = await showModalBottomSheet<DocumentType>(
       context: context,
@@ -96,6 +109,36 @@ class _DocumentationState extends State<Documentation> {
         await Future.delayed(Duration(seconds: 1));
         Navigator.of(context).pop();
       }
+    }
+  }
+
+  _handleDeleteDoc(String doc) async {
+    bool confirm = await showDialog<bool>(
+        context: context,
+        builder: (_) => WillPopScope(
+              onWillPop: () {
+                Navigator.of(context).pop(false);
+                return Future.value(false);
+              },
+              child: DialogBox(
+                  title: 'Confirm',
+                  titleColor: primary,
+                  description:
+                      'Are you sure you want to delete your $doc document?',
+                  buttonText1: 'Cancel',
+                  buttonText2: 'Yes',
+                  btn1Color: Colors.white,
+                  btn2Color: primary,
+                  button1Func: () => Navigator.of(context).pop(false),
+                  button2Func: () => Navigator.of(context).pop(
+                        true,
+                      )),
+            ));
+    if (confirm) {
+      showLoader(context);
+      await DatabaseService().deleteDoc(user, doc);
+      await Future.delayed(Duration(seconds: 1));
+      Navigator.of(context).pop();
     }
   }
 
@@ -122,14 +165,20 @@ class _DocumentationState extends State<Documentation> {
               clipBehavior: Clip.antiAlias,
               child: Stack(
                 children: [
-                  Container(
-                    height: 200,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: NetworkImage(document.url),
-                          fit: BoxFit.cover,
-                          colorFilter: ColorFilter.mode(
-                              Colors.black38, BlendMode.darken)),
+                  GestureDetector(
+                    onTap: () => _openImage(document),
+                    child: Hero(
+                      tag: document,
+                      child: Container(
+                        height: 200,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                              image: CachedNetworkImageProvider(document.url),
+                              fit: BoxFit.cover,
+                              colorFilter: ColorFilter.mode(
+                                  Colors.black38, BlendMode.darken)),
+                        ),
+                      ),
                     ),
                   ),
                   Positioned(
@@ -138,16 +187,19 @@ class _DocumentationState extends State<Documentation> {
                       width: MediaQuery.of(context).size.width,
                       color: Colors.black38,
                       child: ListTile(
-                        title: Text(
-                          capitalize(doc),
-                          style: TextStyle(
-                              fontFamily: 'Raleway',
-                              color: primary,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1.5),
-                        ),
-                      ),
+                          title: Text(
+                            doc,
+                            style: TextStyle(
+                                fontFamily: 'Raleway',
+                                color: primary,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.5),
+                          ),
+                          trailing: IconButton(
+                              onPressed: () => _handleDeleteDoc(doc),
+                              icon:
+                                  Icon(Icons.delete, color: Colors.redAccent))),
                     ),
                   )
                 ],

@@ -11,4 +11,9 @@ class StorageService {
     final url = await uploadTask.ref.getDownloadURL();
     return url;
   }
+
+  Future<void> deleteDoc(String user, String docName) async {
+    final ref = storage.child('users/$user/$docName.jpg');
+    await ref.delete();
+  }
 }

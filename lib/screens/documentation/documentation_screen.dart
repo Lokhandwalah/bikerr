@@ -33,10 +33,14 @@ class _DocumentationState extends State<Documentation> {
               Container(
                 margin: const EdgeInsets.only(top: 10),
                 padding: const EdgeInsets.all(8),
-                child: Text(
-                  'Documentation',
-                  style: Theme.of(context).textTheme.headline3.copyWith(
-                      color: primary, letterSpacing: 2, fontFamily: 'Raleway'),
+                child: FittedBox(
+                  child: Text(
+                    'Documents',
+                    style: Theme.of(context).textTheme.headline3.copyWith(
+                        color: primary,
+                        letterSpacing: 2,
+                        fontFamily: 'Raleway'),
+                  ),
                 ),
               ),
               Container(
@@ -98,7 +102,7 @@ class _DocumentationState extends State<Documentation> {
     final docType = await showModalBottomSheet<DocumentType>(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (_) => DocumentSelectionSheet(),
+      builder: (_) => DocumentSelectionSheet(parentContext: context),
     );
     if (docType != null) {
       final doc = await showModalBottomSheet<File>(
@@ -160,7 +164,7 @@ class _DocumentationState extends State<Documentation> {
         children: docs.keys.map((doc) {
           final document = Document(name: doc, url: docs[doc]);
           return Container(
-            margin: const EdgeInsets.only(top: 10),
+            margin: const EdgeInsets.symmetric(vertical: 5),
             child: Card(
               clipBehavior: Clip.antiAlias,
               child: Stack(
@@ -221,6 +225,8 @@ class DocumentSelectionSheet extends StatelessWidget {
     'PAN': Icons.account_box,
     'Aadhar': Icons.account_box_outlined
   };
+  final BuildContext parentContext;
+  DocumentSelectionSheet({Key key, this.parentContext}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -228,6 +234,8 @@ class DocumentSelectionSheet extends StatelessWidget {
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(50), topRight: Radius.circular(50)),
           color: Theme.of(context).scaffoldBackgroundColor),
+      padding: EdgeInsets.only(
+          bottom: MediaQuery.of(parentContext).viewInsets.bottom),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -239,13 +247,24 @@ class DocumentSelectionSheet extends StatelessWidget {
               style: TextStyle(color: primary, fontSize: 18),
             ),
           ),
-          ...docs.keys.map(
-            (doc) => Card(
-              child: ListTile(
-                leading: Icon(docs[doc]),
-                title:
-                    Text(doc, style: TextStyle(color: primary, fontSize: 18)),
-                onTap: () => Navigator.of(context).pop(Document.getType(doc)),
+          Expanded(
+            child: SingleChildScrollView(
+              physics: BouncingScrollPhysics(),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: docs.keys
+                    .map(
+                      (doc) => Card(
+                        child: ListTile(
+                          leading: Icon(docs[doc]),
+                          title: Text(doc,
+                              style: TextStyle(color: primary, fontSize: 18)),
+                          onTap: () =>
+                              Navigator.of(context).pop(Document.getType(doc)),
+                        ),
+                      ),
+                    )
+                    .toList(),
               ),
             ),
           )

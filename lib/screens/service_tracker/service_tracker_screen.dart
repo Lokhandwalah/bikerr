@@ -27,10 +27,14 @@ class _ServiceTrackerState extends State<ServiceTracker> {
               Container(
                 margin: const EdgeInsets.only(top: 10),
                 padding: const EdgeInsets.all(8),
-                child: Text(
-                  'Service Tracker',
-                  style: Theme.of(context).textTheme.headline3.copyWith(
-                      color: primary, letterSpacing: 2, fontFamily: 'Raleway'),
+                child: FittedBox(
+                  child: Text(
+                    'Service Tracker',
+                    style: Theme.of(context).textTheme.headline3.copyWith(
+                        color: primary,
+                        letterSpacing: 2,
+                        fontFamily: 'Raleway'),
+                  ),
                 ),
               ),
               Container(
@@ -70,16 +74,18 @@ class _ServiceTrackerState extends State<ServiceTracker> {
                       ),
                     ),
                   ),
-                  if (user.kms > 0)
-                    Positioned(
-                      right: 10,
-                      child: IconButton(
-                        icon: Icon(Icons.settings_backup_restore),
-                        onPressed: _handleReset,
-                      ),
-                    )
                 ],
               ),
+              if (user.kms > 0)
+                Center(
+                  child: FlatButton(
+                    onPressed: _handleReset,
+                    child: Text(
+                      'Reset KM',
+                      style: TextStyle(color: secondary, fontSize: 18),
+                    ),
+                  ),
+                ),
               SizedBox(height: 10),
               Padding(
                 padding: const EdgeInsets.all(10.0),

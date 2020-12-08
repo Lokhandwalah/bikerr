@@ -39,10 +39,14 @@ class _PerformanceState extends State<Performance> {
               Container(
                 margin: const EdgeInsets.only(top: 10),
                 padding: const EdgeInsets.all(8),
-                child: Text(
-                  'Performance',
-                  style: Theme.of(context).textTheme.headline3.copyWith(
-                      color: primary, letterSpacing: 2, fontFamily: 'Raleway'),
+                child: FittedBox(
+                  child: Text(
+                    'Performance',
+                    style: Theme.of(context).textTheme.headline3.copyWith(
+                        color: primary,
+                        letterSpacing: 2,
+                        fontFamily: 'Raleway'),
+                  ),
                 ),
               ),
               Container(
@@ -57,7 +61,7 @@ class _PerformanceState extends State<Performance> {
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Text(
-                  'So How much is your CC ?',
+                  "Select your bikes's CC",
                   style: TextStyle(
                       fontFamily: 'Raleway',
                       letterSpacing: 1,
@@ -196,7 +200,7 @@ class _PerformanceState extends State<Performance> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    liters.toStringAsFixed(1),
+                    liters.toStringAsFixed(2),
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 40,

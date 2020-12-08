@@ -23,7 +23,7 @@ class Service {
         kms: 400,
         type: ServiceType.lubrication,
         name: 'Lubrication',
-        msg: 'Change Lubrication',
+        msg: 'Lubricate your chain',
         imageURL:
             'https://media.noria.com/sites/Uploads/2019/10/23/f0806cf6-f7e0-46e1-ac1b-5c66a6c0afec_lubrication-of-gears-image_extra_large.jpeg'),
     Service(
@@ -127,7 +127,8 @@ class Service {
     if (msgs.length == 1)
       finalMsg = msgs.first.toLowerCase();
     else
-      msgs.forEach((msg) => finalMsg += '\n ' + capitalize(msg));
+      msgs.forEach((msg) => finalMsg +=
+          '\n ' + msg.substring(0, 1).toUpperCase() + msg.substring(1));
     return finalMsg;
   }
 }

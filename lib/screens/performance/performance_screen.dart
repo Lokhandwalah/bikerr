@@ -57,7 +57,7 @@ class _PerformanceState extends State<Performance> {
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Text(
-                  'So How much is your CC ?',
+                  "So your bikes's CC ?",
                   style: TextStyle(
                       fontFamily: 'Raleway',
                       letterSpacing: 1,

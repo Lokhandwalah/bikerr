@@ -34,7 +34,7 @@ class _DocumentationState extends State<Documentation> {
                 margin: const EdgeInsets.only(top: 10),
                 padding: const EdgeInsets.all(8),
                 child: Text(
-                  'Documentation',
+                  'Documents',
                   style: Theme.of(context).textTheme.headline3.copyWith(
                       color: primary, letterSpacing: 2, fontFamily: 'Raleway'),
                 ),
@@ -160,7 +160,7 @@ class _DocumentationState extends State<Documentation> {
         children: docs.keys.map((doc) {
           final document = Document(name: doc, url: docs[doc]);
           return Container(
-            margin: const EdgeInsets.only(top: 10),
+            margin: const EdgeInsets.symmetric(vertical: 5),
             child: Card(
               clipBehavior: Clip.antiAlias,
               child: Stack(
@@ -239,13 +239,24 @@ class DocumentSelectionSheet extends StatelessWidget {
               style: TextStyle(color: primary, fontSize: 18),
             ),
           ),
-          ...docs.keys.map(
-            (doc) => Card(
-              child: ListTile(
-                leading: Icon(docs[doc]),
-                title:
-                    Text(doc, style: TextStyle(color: primary, fontSize: 18)),
-                onTap: () => Navigator.of(context).pop(Document.getType(doc)),
+          Container(
+            height: 400,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: docs.keys
+                    .map(
+                      (doc) => Card(
+                        child: ListTile(
+                          leading: Icon(docs[doc]),
+                          title: Text(doc,
+                              style: TextStyle(color: primary, fontSize: 18)),
+                          onTap: () =>
+                              Navigator.of(context).pop(Document.getType(doc)),
+                        ),
+                      ),
+                    )
+                    .toList(),
               ),
             ),
           )

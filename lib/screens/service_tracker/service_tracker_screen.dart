@@ -2,6 +2,7 @@ import 'package:bikerr/models/services.dart';
 import 'package:bikerr/models/user.dart';
 import 'package:bikerr/services/database.dart';
 import 'package:bikerr/utilities/constants.dart';
+import 'package:bikerr/widgets/dialog_box.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -40,31 +41,44 @@ class _ServiceTrackerState extends State<ServiceTracker> {
                       color: primary, fontFamily: 'Raleway', fontSize: 18),
                 ),
               ),
-              Container(
-                margin: const EdgeInsets.only(top: 20),
+              SizedBox(height: 20),
+              Stack(
                 alignment: Alignment.center,
-                child: GestureDetector(
-                  onTap: _openAddSheet,
-                  child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text('You have travelled',
-                              style: TextStyle(
-                                  fontSize: 20, fontFamily: 'Raleway')),
-                          SizedBox(width: 10),
-                          Text(user.kms.toString() + ' KM',
-                              style: TextStyle(
-                                fontSize: 25,
-                                color: primary,
-                              )),
-                        ],
+                children: [
+                  Container(
+                    alignment: Alignment.center,
+                    child: GestureDetector(
+                      onTap: _openAddSheet,
+                      child: Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text('You have travelled',
+                                  style: TextStyle(
+                                      fontSize: 18, fontFamily: 'Raleway')),
+                              SizedBox(width: 10),
+                              Text(user.kms.toString() + ' KM',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    color: primary,
+                                  )),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
+                  if (user.kms > 0)
+                    Positioned(
+                      right: 10,
+                      child: IconButton(
+                        icon: Icon(Icons.settings_backup_restore),
+                        onPressed: _handleReset,
+                      ),
+                    )
+                ],
               ),
               SizedBox(height: 10),
               Padding(
@@ -87,7 +101,8 @@ class _ServiceTrackerState extends State<ServiceTracker> {
                     gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                       maxCrossAxisExtent:
                           MediaQuery.of(context).size.height * 0.26,
-                      mainAxisSpacing: MediaQuery.of(context).size.width * 0.055,
+                      mainAxisSpacing:
+                          MediaQuery.of(context).size.width * 0.055,
                       crossAxisSpacing:
                           MediaQuery.of(context).size.height * 0.01,
                     ),
@@ -131,9 +146,33 @@ class _ServiceTrackerState extends State<ServiceTracker> {
   }
 
   void _openAddSheet() async {
-    await showModalBottomSheet(
+    String msg = await showModalBottomSheet<String>(
         context: context,
         builder: (ctx) => AddKMSheet(screenContext: ctx, user: user));
+    if (msg != null)
+      showDialog(
+        context: context,
+        builder: (_) => DialogBox(
+          title: 'Service',
+          description: 'You should ' + msg,
+          titleColor: primary,
+          buttonText1: 'Ok',
+          btn1Color: Colors.white,
+          button1Func: () => Navigator.of(context).pop(false),
+        ),
+      );
+  }
+
+  void _handleReset() async {
+    bool confirm = await showConfirmationDialog(context,
+        title: 'Reset',
+        content: 'Are you sure you want to reset the counter ?');
+    if (confirm) {
+      showLoader(context, canPop: true);
+      await DatabaseService().updateKM(user, 0, reset: true);
+      await Future.delayed(Duration(milliseconds: 500));
+      Navigator.of(context, rootNavigator: true).pop();
+    }
   }
 }
 
@@ -201,7 +240,8 @@ class _AddKMSheetState extends State<AddKMSheet> {
                       counterText: "",
                     ),
                     onChanged: (_) => setState(() {}),
-                    onSubmitted: _handleAddKm,
+                    onSubmitted: (val) =>
+                        _handleAddKm(val, widget.screenContext),
                   ),
                 ),
                 SizedBox(width: _kmController.text.length == 0 ? 15 : 0),
@@ -217,11 +257,14 @@ class _AddKMSheetState extends State<AddKMSheet> {
     );
   }
 
-  void _handleAddKm(String value) async {
-    Navigator.of(context).pop();
-    int kms = int.tryParse(value);
-    if (kms == null) return;
-    if (kms <= 0) return;
+  void _handleAddKm(String value, BuildContext context) async {
+    int kms = int.tryParse(value) ?? 0;
+    if (kms <= 0) {
+      Navigator.of(context).pop();
+      return;
+    }
+    String msg = Service.getMsg(widget.user.kms + kms);
     await DatabaseService().updateKM(widget.user, kms);
+    Navigator.of(context).pop(msg);
   }
 }

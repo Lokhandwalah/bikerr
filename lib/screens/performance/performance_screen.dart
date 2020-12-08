@@ -169,7 +169,7 @@ class _PerformanceState extends State<Performance> {
   }
 
   Widget buildFuel() {
-    double liters = (kms / _mileage.km).toDouble();
+    double liters = _mileage == null ? 0 : (kms / _mileage.km).toDouble();
     return AnimatedContainer(
       duration: Duration(milliseconds: 500),
       height: kms == 0 ? 0 : 200,
@@ -196,7 +196,7 @@ class _PerformanceState extends State<Performance> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    liters.toStringAsFixed(2),
+                    liters.toStringAsFixed(1),
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 40,

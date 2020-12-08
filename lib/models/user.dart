@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bikerr/models/services.dart';
 import 'package:bikerr/services/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -13,6 +14,7 @@ class User {
 class CurrentUser extends User with ChangeNotifier {
   static CurrentUser user = CurrentUser();
   int kms;
+  SharedPreferences prefs;
   Map<String, dynamic> documents;
   DocumentSnapshot userDoc;
   StreamSubscription<DocumentSnapshot> userInfoStream;
@@ -21,24 +23,36 @@ class CurrentUser extends User with ChangeNotifier {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final userDoc = await DatabaseService().getUserDoc(email);
     prefs.setString('email', email);
+    user.prefs = prefs;
     user.initialize(userDoc);
     user.setStream();
   }
 
   void initialize(DocumentSnapshot userDoc) {
-    final data = userDoc.data();
     print('initialzing user...');
+    Map<String, dynamic> data = userDoc.data();
     user.userDoc = userDoc;
-    user.email = data['email'];
-    user.name = data['name'];
-    user.uid = data['uid'];
-    user.documents = data['documents'];
-    user.kms = int.tryParse(data['kms'].toString());
+    email = data['email'];
+    name = data['name'];
+    uid = data['uid'];
+    documents = data['documents'];
+    kms = int.tryParse(data['kms'].toString());
+    setPrefs();
     user.notifyListeners();
   }
 
-  setStream() => user.userInfoStream =
-      DatabaseService.users.doc(user.email).snapshots().listen(initialize);
+  setPrefs() {
+    prefs.setInt('400', kms ~/ 400 ?? 0);
+    prefs.setInt('3000', kms ~/ 3000 ?? 0);
+    prefs.setInt('5000', kms ~/ 5000 ?? 0);
+    prefs.setInt('6000', kms ~/ 6000 ?? 0);
+    prefs.setInt('10000', kms ~/ 10000 ?? 0);
+    prefs.setInt('40000', kms ~/ 40000 ?? 0);
+    Service.initialze(prefs);
+  }
+
+  setStream() => userInfoStream =
+      DatabaseService.users.doc(email).snapshots().listen(initialize);
 
   void discard() {
     userInfoStream.cancel();

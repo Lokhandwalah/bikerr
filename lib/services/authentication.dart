@@ -4,6 +4,7 @@ import 'package:bikerr/models/user.dart' as MyUser;
 class AuthService {
   static final auth = FirebaseAuth.instance;
   static final exceptionHandler = AuthExceptionHandler();
+  static User get currentUser => auth.currentUser;
 
   Future<Map<String, dynamic>> signIn(String email, String password) async {
     try {
@@ -53,7 +54,7 @@ class AuthService {
     }
   }
 
-  static User get currentUser => auth.currentUser;
+  Future<void> signout() async => await auth.signOut();
 }
 
 enum AuthResultStatus {

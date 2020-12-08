@@ -61,8 +61,9 @@ class _DocumentationState extends State<Documentation> {
     );
   }
 
-  Expanded _buildZeroDocs() {
-    return Expanded(
+  Widget _buildZeroDocs() {
+    return Container(
+      height: 500,
       child: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -112,7 +113,7 @@ class _DocumentationState extends State<Documentation> {
     }
   }
 
-  _handleDeleteDoc(String doc) async {
+  void _handleDeleteDoc(String doc) async {
     bool confirm = await showDialog<bool>(
         context: context,
         builder: (_) => WillPopScope(
@@ -121,18 +122,17 @@ class _DocumentationState extends State<Documentation> {
                 return Future.value(false);
               },
               child: DialogBox(
-                  title: 'Confirm',
-                  titleColor: primary,
-                  description:
-                      'Are you sure you want to delete your $doc document?',
-                  buttonText1: 'Cancel',
-                  buttonText2: 'Yes',
-                  btn1Color: Colors.white,
-                  btn2Color: primary,
-                  button1Func: () => Navigator.of(context).pop(false),
-                  button2Func: () => Navigator.of(context).pop(
-                        true,
-                      )),
+                title: 'Confirm',
+                titleColor: primary,
+                description:
+                    'Are you sure you want to delete your $doc document?',
+                buttonText1: 'Cancel',
+                buttonText2: 'Yes',
+                btn1Color: Colors.white,
+                btn2Color: primary,
+                button1Func: () => Navigator.of(context).pop(false),
+                button2Func: () => Navigator.of(context).pop(true),
+              ),
             ));
     if (confirm) {
       showLoader(context);

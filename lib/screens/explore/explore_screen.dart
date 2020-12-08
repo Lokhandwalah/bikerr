@@ -49,7 +49,7 @@ class _ExploreState extends State<Explore> {
                         ),
                         child: Card(
                           elevation: 5,
-                          shadowColor: Colors.grey,
+                          shadowColor: primary,
                           clipBehavior: Clip.antiAliasWithSaveLayer,
                           child: Column(
                             children: [

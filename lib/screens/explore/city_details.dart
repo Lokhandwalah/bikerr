@@ -56,9 +56,7 @@ class _CityDetailsState extends State<CityDetails> {
             SliverList(
                 delegate: SliverChildListDelegate(
               widget.city.locations
-                  .map(
-                    (location) => _buildLocation(location),
-                  )
+                  .map((location) => _buildLocation(location))
                   .toList(),
             ))
           ],
@@ -68,39 +66,33 @@ class _CityDetailsState extends State<CityDetails> {
   }
 
   Container _buildLocation(Location location) {
-    try {
-      return Container(
-        margin: const EdgeInsets.only(top: 8),
-        padding: const EdgeInsets.symmetric(horizontal: 4),
-        child: Card(
-          child: Column(
-            children: [
-              Container(
-                height: 150,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                      image: FirebaseImage(location.imageUrl),
-                      fit: BoxFit.cover),
-                ),
+    return Container(
+      margin: const EdgeInsets.only(top: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: Card(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              height: 200,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                    image: FirebaseImage(location.imageUrl), fit: BoxFit.cover),
               ),
-              ListTile(
-                title: Text(
-                  location.displayName,
-                  style: TextStyle(color: secondary, fontSize: 18),
-                ),
-                trailing: Text(
-                  '${location.km} KM',
-                  style: TextStyle(color: Colors.white, fontSize: 18),
-                ),
+            ),
+            ListTile(
+              title: Text(
+                location.displayName,
+                style: TextStyle(color: secondary, fontSize: 18),
               ),
-            ],
-          ),
+              trailing: Text(
+                '${location.km} KM',
+                style: TextStyle(color: Colors.white, fontSize: 18),
+              ),
+            ),
+          ],
         ),
-      );
-    } catch (e) {
-      print(location.name);
-      print(e.toString());
-      return Container();
-    }
+      ),
+    );
   }
 }

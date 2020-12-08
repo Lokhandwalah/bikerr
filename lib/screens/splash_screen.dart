@@ -1,3 +1,4 @@
+import 'package:bikerr/models/services.dart';
 import 'package:bikerr/models/user.dart';
 import 'package:bikerr/services/authentication.dart';
 import 'package:firebase_core/firebase_core.dart';
